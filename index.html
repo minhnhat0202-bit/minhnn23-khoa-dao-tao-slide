@@ -362,37 +362,37 @@
                     </div>
                 </div>
 
-                <form class="space-y-6 relative z-10" onsubmit="event.preventDefault();">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray3 mb-2">Mã nhân viên</label>
-                            <input type="text" class="w-full glass-input rounded-lg p-3 text-sm" placeholder="VD: VTE12345">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray3 mb-2">Họ và tên</label>
-                            <input type="text" class="w-full glass-input rounded-lg p-3 text-sm" placeholder="Nhập họ và tên">
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray3 mb-2">Khảo sát kỹ năng AI hiện tại <span class="text-viettelRed">*</span></label>
-                        <select class="w-full glass-input rounded-lg p-3 text-sm appearance-none">
-                            <option value="" disabled selected>[CẦN BỔ SUNG: Nội dung bộ câu hỏi] Chọn mức độ kỹ năng...</option>
-                            <option value="1" class="text-black">Chưa từng sử dụng</option>
-                            <option value="2" class="text-black">Biết cơ bản (ChatGPT, Canva...)</option>
-                            <option value="3" class="text-black">Thường xuyên ứng dụng vào công việc</option>
-                        </select>
-                    </div>
+                <form id="dangKyForm" class="space-y-6 relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label class="block text-sm font-medium text-gray3 mb-2">Mã nhân viên</label>
+            <input type="text" name="maNhanVien" required class="w-full glass-input rounded-lg p-3 text-sm" placeholder="VD: VTE12345">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray3 mb-2">Họ và tên</label>
+            <input type="text" name="hoTen" required class="w-full glass-input rounded-lg p-3 text-sm" placeholder="Nhập họ và tên">
+        </div>
+    </div>
+    
+    <div>
+        <label class="block text-sm font-medium text-gray3 mb-2">Khảo sát kỹ năng AI hiện tại <span class="text-viettelRed">*</span></label>
+        <select name="kyNang" required class="w-full glass-input rounded-lg p-3 text-sm appearance-none">
+            <option value="" disabled selected>Chọn mức độ kỹ năng...</option>
+            <option value="Chưa từng sử dụng" class="text-black">Chưa từng sử dụng</option>
+            <option value="Biết cơ bản (ChatGPT, Canva...)" class="text-black">Biết cơ bản (ChatGPT, Canva...)</option>
+            <option value="Thường xuyên ứng dụng" class="text-black">Thường xuyên ứng dụng vào công việc</option>
+        </select>
+    </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray3 mb-2">Mục đích tham gia chương trình</label>
-                        <textarea rows="3" class="w-full glass-input rounded-lg p-3 text-sm" placeholder="[CẦN BỔ SUNG: Nội dung mục đích] Chia sẻ ngắn gọn mục tiêu của bạn..."></textarea>
-                    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray3 mb-2">Mục đích tham gia chương trình</label>
+        <textarea name="mucDich" rows="3" class="w-full glass-input rounded-lg p-3 text-sm" placeholder="Chia sẻ ngắn gọn mục tiêu của bạn..."></textarea>
+    </div>
 
-                    <button type="submit" class="w-full btn-viettel text-white font-bold py-4 rounded-lg text-lg mt-4 shadow-[0_4px_15px_rgba(227,6,19,0.3)]">
-                        GỬI ĐĂNG KÝ
-                    </button>
-                </form>
+    <button type="submit" id="btnSubmit" class="w-full btn-viettel text-white font-bold py-4 rounded-lg text-lg mt-4 shadow-[0_4px_15px_rgba(227,6,19,0.3)]">
+        GỬI ĐĂNG KÝ
+    </button>
+</form>
             </div>
         </div>
     </section>
@@ -463,6 +463,37 @@
             </div>
         </div>
     </footer>
+<script>
+    const form = document.getElementById('dangKyForm');
+    const btnSubmit = document.getElementById('btnSubmit');
+    
+    // DÁN ĐƯỜNG LINK WEB APP URL CỦA ANH VÀO ĐÂY
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyHsslO8apWEwMfE0nV74o7u6HArbC8ebG8K9QyDPd82ncLEjnFD_RsGwLMf7Dxeutfaw/exec'; 
 
+    form.addEventListener('submit', e => {
+        e.preventDefault(); // Ngăn trình duyệt load lại trang
+        
+        // Hiển thị trạng thái đang gửi
+        btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> ĐANG GỬI...';
+        btnSubmit.disabled = true;
+
+        fetch(scriptURL, { 
+            method: 'POST', 
+            body: new FormData(form),
+            mode: 'no-cors' // Cực kỳ quan trọng để tránh lỗi chặn chéo tên miền trên Github
+        })
+        .then(response => {
+            alert('Cảm ơn anh/chị! Đăng ký đã được ghi nhận thành công.');
+            form.reset(); // Xóa trắng form sau khi gửi
+            btnSubmit.innerHTML = 'GỬI ĐĂNG KÝ';
+            btnSubmit.disabled = false;
+        })
+        .catch(error => {
+            alert('Lỗi gửi dữ liệu. Vui lòng kiểm tra lại mạng hoặc liên hệ hỗ trợ.');
+            btnSubmit.innerHTML = 'GỬI ĐĂNG KÝ';
+            btnSubmit.disabled = false;
+        });
+    });
+</script>
 </body>
 </html>
