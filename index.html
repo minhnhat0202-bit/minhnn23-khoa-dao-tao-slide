@@ -345,22 +345,30 @@
                     <p class="text-gray2 text-sm">Hoàn thành form dưới đây để đăng ký tham gia khóa học. Hạn chót: 06/05/2026.</p>
                 </div>
 
-                <div class="flex justify-center gap-4 mb-10 relative z-10">
-                    <div class="text-center">
-                        <div class="bg-black/50 border border-white/10 rounded-lg w-16 h-16 flex items-center justify-center text-2xl font-bold font-heading">03</div>
-                        <div class="text-xs text-gray2 mt-1 uppercase">Ngày</div>
-                    </div>
-                    <div class="text-xl font-bold mt-4">:</div>
-                    <div class="text-center">
-                        <div class="bg-black/50 border border-white/10 rounded-lg w-16 h-16 flex items-center justify-center text-2xl font-bold font-heading">14</div>
-                        <div class="text-xs text-gray2 mt-1 uppercase">Giờ</div>
-                    </div>
-                    <div class="text-xl font-bold mt-4">:</div>
-                    <div class="text-center">
-                        <div class="bg-black/50 border border-white/10 rounded-lg w-16 h-16 flex items-center justify-center text-2xl font-bold font-heading">45</div>
-                        <div class="text-xs text-gray2 mt-1 uppercase">Phút</div>
-                    </div>
-                </div>
+                <div class="flex justify-center gap-2 md:gap-4 mb-10 relative z-10">
+    <div class="text-center">
+        <div id="cd-days" class="bg-black/50 border border-white/10 rounded-lg w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-xl md:text-2xl font-bold font-heading">00</div>
+        <div class="text-[10px] md:text-xs text-gray2 mt-1 uppercase">Ngày</div>
+    </div>
+    <div class="text-lg md:text-xl font-bold mt-3 md:mt-4 text-gray2">:</div>
+    
+    <div class="text-center">
+        <div id="cd-hours" class="bg-black/50 border border-white/10 rounded-lg w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-xl md:text-2xl font-bold font-heading">00</div>
+        <div class="text-[10px] md:text-xs text-gray2 mt-1 uppercase">Giờ</div>
+    </div>
+    <div class="text-lg md:text-xl font-bold mt-3 md:mt-4 text-gray2">:</div>
+    
+    <div class="text-center">
+        <div id="cd-minutes" class="bg-black/50 border border-white/10 rounded-lg w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-xl md:text-2xl font-bold font-heading">00</div>
+        <div class="text-[10px] md:text-xs text-gray2 mt-1 uppercase">Phút</div>
+    </div>
+    <div class="text-lg md:text-xl font-bold mt-3 md:mt-4 text-viettelRed">:</div>
+    
+    <div class="text-center">
+        <div id="cd-seconds" class="bg-black/50 border border-viettelRed/30 rounded-lg w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-xl md:text-2xl font-bold font-heading text-viettelRed">00</div>
+        <div class="text-[10px] md:text-xs text-viettelRed mt-1 uppercase">Giây</div>
+    </div>
+</div>
 
                 <form id="dangKyForm" class="space-y-6 relative z-10">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -494,6 +502,51 @@
             btnSubmit.disabled = false;
         });
     });
+    // --- SCRIPT ĐỒNG HỒ ĐẾM NGƯỢC ---
+// Thiết lập ngày hạn chót: 23:59:59 ngày 06/05/2026
+const countDownDate = new Date("May 06, 2026 23:59:59").getTime();
+
+// Cập nhật đồng hồ mỗi 1 giây (1000 milliseconds)
+const countdownTimer = setInterval(function() {
+    
+    // Lấy thời gian hiện tại
+    const now = new Date().getTime();
+    
+    // Tìm khoảng cách giữa hiện tại và hạn chót
+    const distance = countDownDate - now;
+    
+    // Tính toán số Ngày, Giờ, Phút, Giây
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    // Hàm thêm số 0 đằng trước nếu số nhỏ hơn 10 (VD: 09 thay vì 9)
+    const formatTime = (time) => time < 10 ? "0" + time : time;
+    
+    // Đẩy kết quả ra giao diện HTML
+    document.getElementById("cd-days").innerHTML = formatTime(days);
+    document.getElementById("cd-hours").innerHTML = formatTime(hours);
+    document.getElementById("cd-minutes").innerHTML = formatTime(minutes);
+    document.getElementById("cd-seconds").innerHTML = formatTime(seconds);
+    
+    // Nếu đếm ngược kết thúc (quá hạn)
+    if (distance < 0) {
+        clearInterval(countdownTimer); // Dừng đồng hồ
+        document.getElementById("cd-days").innerHTML = "00";
+        document.getElementById("cd-hours").innerHTML = "00";
+        document.getElementById("cd-minutes").innerHTML = "00";
+        document.getElementById("cd-seconds").innerHTML = "00";
+        
+        // Tùy chọn: Đổi chữ trên nút Đăng ký khi hết hạn
+        const btn = document.getElementById('btnSubmit');
+        if(btn) {
+            btn.innerHTML = "ĐÃ HẾT HẠN ĐĂNG KÝ";
+            btn.disabled = true;
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+        }
+    }
+}, 1000);
 </script>
 </body>
 </html>
